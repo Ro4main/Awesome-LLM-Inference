@@ -1,6 +1,6 @@
 # KV Cache Scheduling/Quantize/Dropping 论文优先级排序
 
-基于**影响力、创新性、工业界采用度**三个维度，将本章节 54 篇论文按 Scheduling / Quantize / Dropping 三大方向分为三级。
+基于**影响力、创新性、工业界采用度**三个维度，将本章节 55 篇论文（含 NexusQuant 早期开源项目）按 Scheduling / Quantize / Dropping 三大方向分为三级。
 
 > 三大方向作用于显存公式的不同因子，**正交可组合**：Scheduling 优化"分配效率与并发"，Quantize 压缩"单条 KV 体积"，Dropping 削减"KV 条目数量"。
 
@@ -64,7 +64,7 @@ Dropping:    H2O → SnapKV → Adaptive KV Cache Compress
 | 14 | **CacheBlend** | 2024.05 | 缓存融合 | University of Chicago | 跨请求缓存知识融合，代表 RAG/知识库场景的 KV 复用方向，LMCache 开源 |
 | 15 | **DistKV-LLM (Infinite-LLM)** | 2024.01 | 分布式 KV | Alibaba | DistAttention + 分布式 KVCache，跨 GPU 显存池化，代表分布式调度方向 |
 
-### Quantize 补充（5 篇）
+### Quantize 补充（6 篇）
 
 | 序号 | 论文 | 时间 | 方向 | 机构 | 理由 |
 |:---:|------|:---:|------|------|------|
@@ -73,16 +73,17 @@ Dropping:    H2O → SnapKV → Adaptive KV Cache Compress
 | 18 | **ZipCache** | 2024.05 | 显著 token 识别 | Zhejiang University 等 | 显著 token 识别 + 量化，另一角度的重要性感知量化 |
 | 19 | **AlignedKV** | 2024.09 | 内存访问优化 | Tsinghua University | 精度对齐量化，关注内存访问效率，工程参考价值高，有开源代码 |
 | 20 | **MiniCache** | 2024.05 | 深度维度压缩 | ZIP Lab | 深度维度压缩 KV，跨层共享思路独特 |
+| 21 | **NexusQuant** | 2026.04 | E8 格点量化 | Independent (jagmarques) | E8 根格向量量化 + 注意力感知 token 驱逐，10-33× 压缩，training-free 一行接入。**早期开源研究项目**（非同行评审论文，仅 Mistral-7B/Phi-3-mini 验证），代表 2026 格点量化前沿探索，有 PyPI 包 `nexusquant-kv` |
 
 ### Dropping 补充（5 篇）
 
 | 序号 | 论文 | 时间 | 方向 | 机构 | 理由 |
 |:---:|------|:---:|------|------|------|
-| 21 | **Keyformer** | 2024.03 | key token 选择 | UBC 等 | d-matrix 硬件公司出品，代表硬件-算法协同的 token 选择思路，有开源代码 |
-| 22 | **SqueezeAttention** | 2024.04 | 层间预算分配 | Lanzhou University 等 | 层间最优预算分配，与 PyramidKV（未收录）属同一子方向 |
-| 23 | **AdaKV** | 2024.10 | 自适应预算 | USTC | 自适应预算分配驱逐，head-wise 分配，有开源实现 |
-| 24 | **ThinK** | 2024.07 | query 驱动剪枝 | Salesforce AI Research | query 驱动的 key cache 剪枝，思路新颖 |
-| 25 | **LayerKV** | 2024.10 | 层级管理 | Ant Group | 层级 KV Cache 管理，按层卸载与压缩，工程视角 |
+| 22 | **Keyformer** | 2024.03 | key token 选择 | UBC 等 | d-matrix 硬件公司出品，代表硬件-算法协同的 token 选择思路，有开源代码 |
+| 23 | **SqueezeAttention** | 2024.04 | 层间预算分配 | Lanzhou University 等 | 层间最优预算分配，与 PyramidKV（未收录）属同一子方向 |
+| 24 | **AdaKV** | 2024.10 | 自适应预算 | USTC | 自适应预算分配驱逐，head-wise 分配，有开源实现 |
+| 25 | **ThinK** | 2024.07 | query 驱动剪枝 | Salesforce AI Research | query 驱动的 key cache 剪枝，思路新颖 |
+| 26 | **LayerKV** | 2024.10 | 层级管理 | Ant Group | 层级 KV Cache 管理，按层卸载与压缩，工程视角 |
 
 ### 补充篇主题阅读路线
 
@@ -221,50 +222,50 @@ Dropping:    H2O → SnapKV → Adaptive KV Cache Compress
 
 | 序号 | 论文 | 时间 | 理由 |
 |:---:|------|:---:|------|
-| 26 | LTP | 2022.06 | 早期 token 剪枝，思想已被后续工作覆盖 |
-| 27 | KV Cache FP8 + WINT4 | 2023.09 | 博客文章，非正式论文，实践参考价值有限 |
-| 28 | CacheGen | 2023.10 | 侧重上下文加载速度，与 KV 管理主方向偏离 |
-| 29 | KV-Cache Optimizations + Speculative | 2023.12 | 增量结合工作，独立价值有限 |
-| 30 | FASTDECODE | 2024.03 | 异构调度，niche 场景 |
-| 31 | KV Cache Prefetch | 2025.04 | 预取优化，增量改进 |
+| 27 | LTP | 2022.06 | 早期 token 剪枝，思想已被后续工作覆盖 |
+| 28 | KV Cache FP8 + WINT4 | 2023.09 | 博客文章，非正式论文，实践参考价值有限 |
+| 29 | CacheGen | 2023.10 | 侧重上下文加载速度，与 KV 管理主方向偏离 |
+| 30 | KV-Cache Optimizations + Speculative | 2023.12 | 增量结合工作，独立价值有限 |
+| 31 | FASTDECODE | 2024.03 | 异构调度，niche 场景 |
+| 32 | KV Cache Prefetch | 2025.04 | 预取优化，增量改进 |
 
 ### Quantize 非必要（4 篇）
 
 | 序号 | 论文 | 时间 | 理由 |
 |:---:|------|:---:|------|
-| 32 | MiKV | 2024.02 | 混合精度思路与 QAQ 重叠度高 |
-| 33 | CompressKV | 2024.06 | 压缩 KV head，与 GQA 类似但影响精度 |
-| 34 | Zero-Delay QKV Compression | 2024.08 | 零延迟压缩，增量改进 |
-| 35 | Inference-Time Hyper-Scaling | 2025.06 | NVIDIA 报告，偏宣传性质 |
+| 33 | MiKV | 2024.02 | 混合精度思路与 QAQ 重叠度高 |
+| 34 | CompressKV | 2024.06 | 压缩 KV head，与 GQA 类似但影响精度 |
+| 35 | Zero-Delay QKV Compression | 2024.08 | 零延迟压缩，增量改进 |
+| 36 | Inference-Time Hyper-Scaling | 2025.06 | NVIDIA 报告，偏宣传性质 |
 
 ### Dropping 非必要（11 篇）
 
 | 序号 | 论文 | 时间 | 理由 |
 |:---:|------|:---:|------|
-| 36 | Scissorhands | 2023.05 | 重要性持久性假设，已被更精细方法超越 |
-| 37 | QK-Sparse/Dropping Attention | 2023.06 | 稀疏 FlashAttention，与主方向偏离 |
-| 38 | KV Cache Compress with LoRA | 2023.12 | LoRA 压缩 KV，niche |
-| 39 | LESS | 2024.02 | 合成循环 KV 压缩，增量工作 |
-| 40 | DMC | 2024.03 | 动态内存压缩，需改造模型 |
-| 41 | ALISA | 2024.03 | 稀疏感知缓存，增量改进 |
-| 42 | Palu | 2024.07 | 低秩投影压缩，与 GEAR 重叠 |
-| 43 | ClusterKV | 2024.12 | 语义空间压缩，niche |
-| 44 | DynamicKV | 2024.12 | 任务自适应压缩，增量性 |
-| 45 | KVzip | 2025.05 | Query-agnostic 压缩，场景特殊 |
-| 46 | KV Cache Recomputation | 2024.11 | I/O 感知重计算，增量改进 |
+| 37 | Scissorhands | 2023.05 | 重要性持久性假设，已被更精细方法超越 |
+| 38 | QK-Sparse/Dropping Attention | 2023.06 | 稀疏 FlashAttention，与主方向偏离 |
+| 39 | KV Cache Compress with LoRA | 2023.12 | LoRA 压缩 KV，niche |
+| 40 | LESS | 2024.02 | 合成循环 KV 压缩，增量工作 |
+| 41 | DMC | 2024.03 | 动态内存压缩，需改造模型 |
+| 42 | ALISA | 2024.03 | 稀疏感知缓存，增量改进 |
+| 43 | Palu | 2024.07 | 低秩投影压缩，与 GEAR 重叠 |
+| 44 | ClusterKV | 2024.12 | 语义空间压缩，niche |
+| 45 | DynamicKV | 2024.12 | 任务自适应压缩，增量性 |
+| 46 | KVzip | 2025.05 | Query-agnostic 压缩，场景特殊 |
+| 47 | KV Cache Recomputation | 2024.11 | I/O 感知重计算，增量改进 |
 
 ### 其他/跨场景非必要（8 篇）
 
 | 序号 | 论文 | 时间 | 理由 |
 |:---:|------|:---:|------|
-| 47 | ChunkAttention | 2024.02 | 前缀感知 KV + 两阶段分区，与 RadixAttention 重叠 |
-| 48 | KV-Runahead | 2024.05 | 并行 KV 生成，niche |
-| 49 | MLKV | 2024.07 | 多层 KV head，需改架构 |
-| 50 | MemServe | 2024.06 | 弹性内存池（已列入路线 5，时间紧可跳过） |
-| 51 | Prompt Caching | 2024.02 | 嵌入相似度前缀缓存，与 RadixAttention 重叠 |
-| 52 | DynamicLLaVA | 2025.02 | 多模态场景，非纯 LLM |
-| 53 | CacheCraft | 2025.02 | RAG chunk-cache 管理，场景特殊 |
-| 54 | AVP | 2026.03 | 跨模型 KV 迁移协议，前沿但小众 |
+| 48 | ChunkAttention | 2024.02 | 前缀感知 KV + 两阶段分区，与 RadixAttention 重叠 |
+| 49 | KV-Runahead | 2024.05 | 并行 KV 生成，niche |
+| 50 | MLKV | 2024.07 | 多层 KV head，需改架构 |
+| 51 | MemServe | 2024.06 | 弹性内存池（已列入路线 5，时间紧可跳过） |
+| 52 | Prompt Caching | 2024.02 | 嵌入相似度前缀缓存，与 RadixAttention 重叠 |
+| 53 | DynamicLLaVA | 2025.02 | 多模态场景，非纯 LLM |
+| 54 | CacheCraft | 2025.02 | RAG chunk-cache 管理，场景特殊 |
+| 55 | AVP | 2026.03 | 跨模型 KV 迁移协议，前沿但小众 |
 
 ---
 
@@ -272,7 +273,7 @@ Dropping:    H2O → SnapKV → Adaptive KV Cache Compress
 
 ```
 必读    █████████ 9 篇   ── 三大方向各 3 篇奠基/标杆，构建知识体系
-补充    ████████████████ 16 篇 ── 方向代表 + 工业价值 + 技术特色
+补充    ██████████████████ 17 篇 ── 方向代表 + 工业价值 + 技术特色（含 NexusQuant 早期开源项目）
 非必要  █████████████████████████████ 29 篇 ── 增量改进 + 小众场景 + 归类存疑
 ```
 
