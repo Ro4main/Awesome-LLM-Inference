@@ -22,7 +22,7 @@
 |:---:|------|:---:|------|------|
 | 4 | **GEAR** | 2024.03 | Georgia Tech | 量化 + 低秩 + 稀疏三组合的**代表性工作**，展示突破 2-bit 极限的补偿范式，近无损高压缩比，有开源代码 |
 | 5 | **TensorRT-LLM KV Cache FP8** | 2023.10 | NVIDIA | 工业级 FP8 KV 量化的标准实现，NVIDIA 官方方案，了解生产部署必须读 |
-| 6 | **NexusQuant** | 2026.03 | NexusQuant | E8 格点量化 + 时序预测编码，7× 压缩、-2.26% PPL，一行接入，2026 最新前沿 |
+| 6 | **KVQuant** | 2024.01 | UC Berkeley | KV 量化的**集大成之作**，四项创新（Per-Channel K + Pre-RoPE + 非均匀 + Dense-Sparse），3-bit 困惑度损失 <0.1，单卡跑 1M 上下文（位于 README 长上下文章节 L394） |
 
 ### Dropping 方向（3 篇）
 
@@ -38,8 +38,8 @@
 Scheduling:  PagedAttention → SARATHI → RadixAttention
               (分页基石)      (chunk调度)  (前缀复用)
 
-Quantize:    GEAR → TensorRT-LLM FP8 → NexusQuant
-             (补偿范式) (工业FP8)      (2026前沿)
+Quantize:    GEAR → TensorRT-LLM FP8 → KVQuant
+             (补偿范式) (工业FP8)      (量化集大成)
 
 Dropping:    H2O → SnapKV → Adaptive KV Cache Compress
              (heavy hitter) (观察窗口)  (自适应丢弃)
@@ -47,7 +47,7 @@ Dropping:    H2O → SnapKV → Adaptive KV Cache Compress
               三者正交可组合：调度为基座 + 量化做压缩 + 驱逐按场景叠加
 ```
 
-> 注：**StreamingLLM**（attention sink 发现者，位于 README 框架章节 L175）与 **KVQuant**（KV 量化集大成者，位于长上下文章节 L394）虽不在本章节，但分别为 Dropping 与 Quantize 方向的奠基/标杆工作，强烈建议交叉阅读。
+> 注：**StreamingLLM**（attention sink 发现者，位于 README 框架章节 L175）虽不在本章节，但为 Dropping 方向的奠基工作，强烈建议交叉阅读。**KVQuant** 已提升为必读（位于 README 长上下文章节 L394），因其为 Quantize 方向的标杆之作。
 
 ---
 
@@ -228,44 +228,43 @@ Dropping:    H2O → SnapKV → Adaptive KV Cache Compress
 | 30 | FASTDECODE | 2024.03 | 异构调度，niche 场景 |
 | 31 | KV Cache Prefetch | 2025.04 | 预取优化，增量改进 |
 
-### Quantize 非必要（5 篇）
+### Quantize 非必要（4 篇）
 
 | 序号 | 论文 | 时间 | 理由 |
 |:---:|------|:---:|------|
 | 32 | MiKV | 2024.02 | 混合精度思路与 QAQ 重叠度高 |
 | 33 | CompressKV | 2024.06 | 压缩 KV head，与 GQA 类似但影响精度 |
 | 34 | Zero-Delay QKV Compression | 2024.08 | 零延迟压缩，增量改进 |
-| 35 | KVTC | 2025.11 | 变换编码压缩，实验性强 |
-| 36 | Inference-Time Hyper-Scaling | 2025.06 | NVIDIA 报告，偏宣传性质 |
+| 35 | Inference-Time Hyper-Scaling | 2025.06 | NVIDIA 报告，偏宣传性质 |
 
 ### Dropping 非必要（11 篇）
 
 | 序号 | 论文 | 时间 | 理由 |
 |:---:|------|:---:|------|
-| 37 | Scissorhands | 2023.05 | 重要性持久性假设，已被更精细方法超越 |
-| 38 | QK-Sparse/Dropping Attention | 2023.06 | 稀疏 FlashAttention，与主方向偏离 |
-| 39 | KV Cache Compress with LoRA | 2023.12 | LoRA 压缩 KV，niche |
-| 40 | LESS | 2024.02 | 合成循环 KV 压缩，增量工作 |
-| 41 | DMC | 2024.03 | 动态内存压缩，需改造模型 |
-| 42 | ALISA | 2024.03 | 稀疏感知缓存，增量改进 |
-| 43 | Palu | 2024.07 | 低秩投影压缩，与 GEAR 重叠 |
-| 44 | ClusterKV | 2024.12 | 语义空间压缩，niche |
-| 45 | DynamicKV | 2024.12 | 任务自适应压缩，增量性 |
-| 46 | KVzip | 2025.05 | Query-agnostic 压缩，场景特殊 |
-| 47 | KV Cache Recomputation | 2024.11 | I/O 感知重计算，增量改进 |
+| 36 | Scissorhands | 2023.05 | 重要性持久性假设，已被更精细方法超越 |
+| 37 | QK-Sparse/Dropping Attention | 2023.06 | 稀疏 FlashAttention，与主方向偏离 |
+| 38 | KV Cache Compress with LoRA | 2023.12 | LoRA 压缩 KV，niche |
+| 39 | LESS | 2024.02 | 合成循环 KV 压缩，增量工作 |
+| 40 | DMC | 2024.03 | 动态内存压缩，需改造模型 |
+| 41 | ALISA | 2024.03 | 稀疏感知缓存，增量改进 |
+| 42 | Palu | 2024.07 | 低秩投影压缩，与 GEAR 重叠 |
+| 43 | ClusterKV | 2024.12 | 语义空间压缩，niche |
+| 44 | DynamicKV | 2024.12 | 任务自适应压缩，增量性 |
+| 45 | KVzip | 2025.05 | Query-agnostic 压缩，场景特殊 |
+| 46 | KV Cache Recomputation | 2024.11 | I/O 感知重计算，增量改进 |
 
-### 其他/跨场景非必要（7 篇）
+### 其他/跨场景非必要（8 篇）
 
 | 序号 | 论文 | 时间 | 理由 |
 |:---:|------|:---:|------|
-| 48 | ChunkAttention | 2024.02 | 前缀感知 KV + 两阶段分区，与 RadixAttention 重叠 |
-| 49 | KV-Runahead | 2024.05 | 并行 KV 生成，niche |
-| 50 | MLKV | 2024.07 | 多层 KV head，需改架构 |
-| 51 | MemServe | 2024.06 | 弹性内存池（已列入路线 5，时间紧可跳过） |
-| 52 | Prompt Caching | 2024.02 | 嵌入相似度前缀缓存，与 RadixAttention 重叠 |
-| 53 | DynamicLLaVA | 2025.02 | 多模态场景，非纯 LLM |
-| 54 | CacheCraft | 2025.02 | RAG chunk-cache 管理，场景特殊 |
-| 55 | AVP | 2026.03 | 跨模型 KV 迁移协议，前沿但小众 |
+| 47 | ChunkAttention | 2024.02 | 前缀感知 KV + 两阶段分区，与 RadixAttention 重叠 |
+| 48 | KV-Runahead | 2024.05 | 并行 KV 生成，niche |
+| 49 | MLKV | 2024.07 | 多层 KV head，需改架构 |
+| 50 | MemServe | 2024.06 | 弹性内存池（已列入路线 5，时间紧可跳过） |
+| 51 | Prompt Caching | 2024.02 | 嵌入相似度前缀缓存，与 RadixAttention 重叠 |
+| 52 | DynamicLLaVA | 2025.02 | 多模态场景，非纯 LLM |
+| 53 | CacheCraft | 2025.02 | RAG chunk-cache 管理，场景特殊 |
+| 54 | AVP | 2026.03 | 跨模型 KV 迁移协议，前沿但小众 |
 
 ---
 
@@ -281,8 +280,8 @@ Dropping:    H2O → SnapKV → Adaptive KV Cache Compress
 
 - **只读 3 篇**：PagedAttention → H2O → GEAR（三大方向各取奠基作）
 - **只读 5 篇**：再加 SARATHI → SnapKV（补全 Scheduling 调度与 Dropping 进阶）
-- **只读 9 篇**：补全 TensorRT-LLM FP8、NexusQuant、RadixAttention、Adaptive KV Cache Compress（覆盖全部必读）
-- **跟上 2026 前沿**：NexusQuant + AVP
+- **只读 9 篇**：补全 TensorRT-LLM FP8、KVQuant、RadixAttention、Adaptive KV Cache Compress（覆盖全部必读）
+- **跟上 2026 前沿**：AVP（跨模型 KV 迁移协议）
 
 ### 三大方向组合部署建议
 
